@@ -3,7 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using Xamarin.Forms;
+using Microsoft.Maui.Graphics;
+using Microsoft.Maui.Controls;
+using Microsoft.Maui;
+using System.Globalization;
+using System.Collections.ObjectModel;
 
 namespace XamForms.Controls
 {
@@ -22,10 +26,10 @@ namespace XamForms.Controls
             TitleLeftArrow = new CalendarButton
             {
                 FontAttributes = FontAttributes.Bold,
-                BackgroundColor = Color.Transparent,
+                BackgroundColor = Colors.Transparent,
                 FontSize = 24,
                 Text = "❰",
-                TextColor = Color.FromHex("#c82727")
+                TextColor = Color.FromArgb("#c82727")
             };
             TitleLabel = new Label
             {
@@ -33,17 +37,17 @@ namespace XamForms.Controls
                 VerticalTextAlignment = TextAlignment.Center,
                 HorizontalTextAlignment = TextAlignment.Center,
                 FontAttributes = FontAttributes.Bold,
-                TextColor = Color.Black,
+                TextColor = Colors.Black,
                 HorizontalOptions = LayoutOptions.FillAndExpand,
                 Text = ""
             };
             TitleRightArrow = new CalendarButton
             {
                 FontAttributes = FontAttributes.Bold,
-                BackgroundColor = Color.Transparent,
+                BackgroundColor = Colors.Transparent,
                 FontSize = 24,
                 Text = "❱",
-                TextColor = Color.FromHex("#c82727")
+                TextColor = Color.FromArgb("#c82727")
             };
             MonthNavigationLayout = new StackLayout
             {
@@ -155,7 +159,8 @@ namespace XamForms.Controls
         #region BorderWidth
 
         public static readonly BindableProperty BorderWidthProperty =
-            BindableProperty.Create(nameof(BorderWidth), typeof(int), typeof(Calendar), Device.RuntimePlatform == Device.iOS ? 1 : 3,
+            BindableProperty.Create(nameof(BorderWidth), typeof(int), typeof(Calendar), // TODO Xamarin.Forms.Device.RuntimePlatform is no longer supported. Use Microsoft.Maui.Devices.DeviceInfo.Platform instead. For more details see https://learn.microsoft.com/en-us/dotnet/maui/migration/forms-projects#device-changes
+Device.RuntimePlatform == Device.iOS ? 1 : 3,
                                     propertyChanged: (bindable, oldValue, newValue) => (bindable as Calendar).ChangeBorderWidth((int)newValue, (int)oldValue));
 
         protected void ChangeBorderWidth(int newValue, int oldValue)
@@ -193,7 +198,8 @@ namespace XamForms.Controls
         #region OuterBorderWidth
 
         public static readonly BindableProperty OuterBorderWidthProperty =
-            BindableProperty.Create(nameof(OuterBorderWidth), typeof(int), typeof(Calendar), Device.RuntimePlatform == Device.iOS ? 1 : 3,
+            BindableProperty.Create(nameof(OuterBorderWidth), typeof(int), typeof(Calendar), // TODO Xamarin.Forms.Device.RuntimePlatform is no longer supported. Use Microsoft.Maui.Devices.DeviceInfo.Platform instead. For more details see https://learn.microsoft.com/en-us/dotnet/maui/migration/forms-projects#device-changes
+Device.RuntimePlatform == Device.iOS ? 1 : 3,
                                     propertyChanged: (bindable, oldValue, newValue) => (bindable as Calendar).MainCalendars.ForEach((obj) => obj.Padding = (int)newValue));
 
         /// <summary>
@@ -211,7 +217,7 @@ namespace XamForms.Controls
         #region BorderColor
 
         public static readonly BindableProperty BorderColorProperty =
-            BindableProperty.Create(nameof(BorderColor), typeof(Color), typeof(Calendar), Color.FromHex("#dddddd"),
+            BindableProperty.Create(nameof(BorderColor), typeof(Color), typeof(Calendar), Color.FromArgb("#dddddd"),
                                     propertyChanged: (bindable, oldValue, newValue) => (bindable as Calendar).ChangeBorderColor((Color)newValue, (Color)oldValue));
 
         protected void ChangeBorderColor(Color newValue, Color oldValue)
@@ -236,13 +242,13 @@ namespace XamForms.Controls
         #region DatesBackgroundColor
 
         public static readonly BindableProperty DatesBackgroundColorProperty =
-            BindableProperty.Create(nameof(DatesBackgroundColor), typeof(Color), typeof(Calendar), Color.White,
+            BindableProperty.Create(nameof(DatesBackgroundColor), typeof(Color), typeof(Calendar), Colors.White,
                                     propertyChanged: (bindable, oldValue, newValue) => (bindable as Calendar).ChangeDatesBackgroundColor((Color)newValue, (Color)oldValue));
 
         protected void ChangeDatesBackgroundColor(Color newValue, Color oldValue)
         {
             if (newValue == oldValue) return;
-            buttons.FindAll(b => b.IsEnabled && (!b.IsSelected || SelectedBackgroundColor != Color.Default)).ForEach(b => b.BackgroundColor = newValue);
+            buttons.FindAll(b => b.IsEnabled && (!b.IsSelected || SelectedBackgroundColor != null)).ForEach(b => b.BackgroundColor = newValue);
         }
 
         /// <summary>
@@ -260,13 +266,13 @@ namespace XamForms.Controls
         #region DatesTextColor
 
         public static readonly BindableProperty DatesTextColorProperty =
-            BindableProperty.Create(nameof(DatesTextColor), typeof(Color), typeof(Calendar), Color.Black,
+            BindableProperty.Create(nameof(DatesTextColor), typeof(Color), typeof(Calendar), Colors.Black,
                                     propertyChanged: (bindable, oldValue, newValue) => (bindable as Calendar).ChangeDatesTextColor((Color)newValue, (Color)oldValue));
 
         protected void ChangeDatesTextColor(Color newValue, Color oldValue)
         {
             if (newValue == oldValue) return;
-            buttons.FindAll(b => b.IsEnabled && (!b.IsSelected || SelectedTextColor != Color.Default) && !b.IsOutOfMonth).ForEach(b => b.TextColor = newValue);
+            buttons.FindAll(b => b.IsEnabled && (!b.IsSelected || SelectedTextColor != null) && !b.IsOutOfMonth).ForEach(b => b.TextColor = newValue);
         }
 
         /// <summary>
@@ -320,7 +326,7 @@ namespace XamForms.Controls
         protected void ChangeDatesFontAttributes(FontAttributes newValue, FontAttributes oldValue)
         {
             if (newValue == oldValue) return;
-            buttons.FindAll(b => b.IsEnabled && (!b.IsSelected || SelectedTextColor != Color.Default) && !b.IsOutOfMonth).ForEach(b => b.FontAttributes = newValue);
+            buttons.FindAll(b => b.IsEnabled && (!b.IsSelected || SelectedTextColor != null) && !b.IsOutOfMonth).ForEach(b => b.FontAttributes = newValue);
         }
 
         /// <summary>
@@ -484,6 +490,7 @@ namespace XamForms.Controls
                 var weekNumbers = new Grid { VerticalOptions = LayoutOptions.FillAndExpand, HorizontalOptions = LayoutOptions.Start, RowSpacing = 0, ColumnSpacing = 0, Padding = new Thickness(0, 0, 0, 0) };
                 weekNumbers.ColumnDefinitions = new ColumnDefinitionCollection { columDef };
                 weekNumbers.RowDefinitions = new RowDefinitionCollection { rowDef, rowDef, rowDef, rowDef, rowDef, rowDef };
+                // TODO Xamarin.Forms.Device.RuntimePlatform is no longer supported. Use Microsoft.Maui.Devices.DeviceInfo.Platform instead. For more details see https://learn.microsoft.com/en-us/dotnet/maui/migration/forms-projects#device-changes
                 weekNumbers.WidthRequest = NumberOfWeekFontSize * (Device.RuntimePlatform == Device.iOS ? 1.5 : 2.5);
 
 
@@ -502,7 +509,7 @@ namespace XamForms.Controls
                         FontAttributes = NumberOfWeekFontAttributes,
                         FontFamily = NumberOfWeekFontFamily
                     });
-                    weekNumbers.Children.Add(weekNumberLabels.Last(), 0, r);
+                    weekNumbers.Children.Add(weekNumberLabels.Last()); //, 0, r
                 }
                 WeekNumbers.Add(weekNumbers);
             }
@@ -526,7 +533,7 @@ namespace XamForms.Controls
                     {
                         var calendarButton = new CalendarButton
                         {
-                            BorderRadius = 0,
+                            CornerRadius = 0,
                             BorderWidth = BorderWidth,
                             BorderColor = BorderColor,
                             FontSize = DatesFontSize,
@@ -545,7 +552,7 @@ namespace XamForms.Controls
                         buttons.Add(calendarButton);
                         var b = buttons.Last();
                         b.Clicked += DateClickedEvent;
-                        mainCalendar.Children.Add(b, c, r);
+                        mainCalendar.Children.Add(b); //, c, r
                     }
                 }
                 MainCalendars.Add(mainCalendar);
@@ -685,5 +692,6 @@ namespace XamForms.Controls
         #endregion
 
         public event EventHandler<DateTimeEventArgs> DateClicked;
+
     }
 }

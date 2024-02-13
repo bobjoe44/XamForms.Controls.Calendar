@@ -1,18 +1,17 @@
-﻿<?xml version="1.0" encoding="UTF-8" ?>
-<ContentPage
+﻿<ContentPage
     x:Class="CalendarDemo.CalendarDemoPage"
-    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:controls="clr-namespace:XamForms.Controls;assembly=XamForms.Controls.Calendar">
-    <ContentPage.Content>
-        <Grid Margin="16,44,16,16">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="*" />
-            </Grid.RowDefinitions>
 
-            <controls:Calendar
+    <Grid Margin="16,44,16,16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <controls:Calendar
                 Grid.Row="1"
                 Padding="10,0,10,0"
                 BorderColor="White"
@@ -30,6 +29,5 @@
                 SpecialDates="{Binding Attendances}"
                 StartDay="Monday"
                 WeekdaysTextColor="Black" />
-        </Grid>
-    </ContentPage.Content>
+    </Grid>
 </ContentPage>

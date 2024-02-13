@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using Xamarin.Forms;
+using Microsoft.Maui.Graphics;
+using Microsoft.Maui.Controls;
+using Microsoft.Maui;
 
 namespace XamForms.Controls
 {
@@ -14,7 +16,7 @@ namespace XamForms.Controls
         #region NumberOfWeekTextColor
 
         public static readonly BindableProperty NumberOfWeekTextColorProperty =
-          BindableProperty.Create(nameof(NumberOfWeekTextColor), typeof(Color), typeof(Calendar), Color.FromHex("#aaaaaa"),
+          BindableProperty.Create(nameof(NumberOfWeekTextColor), typeof(Color), typeof(Calendar), Color.FromArgb("#aaaaaa"),
                                   propertyChanged: (bindable, oldValue, newValue) => (bindable as Calendar).ChangeNumberOfWeekTextColor((Color)newValue, (Color)oldValue));
 
         protected void ChangeNumberOfWeekTextColor(Color newValue, Color oldValue)
@@ -34,7 +36,7 @@ namespace XamForms.Controls
         }
 
         public static readonly BindableProperty NumberOfWeekBackgroundColorProperty =
-            BindableProperty.Create(nameof(NumberOfWeekBackgroundColor), typeof(Color), typeof(Calendar), Color.Transparent,
+            BindableProperty.Create(nameof(NumberOfWeekBackgroundColor), typeof(Color), typeof(Calendar), Colors.Transparent,
                                     propertyChanged: (bindable, oldValue, newValue) => (bindable as Calendar).ChangeNumberOfWeekBackgroundColor((Color)newValue, (Color)oldValue));
 
         protected void ChangeNumberOfWeekBackgroundColor(Color newValue, Color oldValue)
@@ -64,6 +66,7 @@ namespace XamForms.Controls
         protected void ChangeNumberOfWeekFontSize(double newValue, double oldValue)
         {
             if (Math.Abs(newValue - oldValue) < 0.01) return;
+            // TODO Xamarin.Forms.Device.RuntimePlatform is no longer supported. Use Microsoft.Maui.Devices.DeviceInfo.Platform instead. For more details see https://learn.microsoft.com/en-us/dotnet/maui/migration/forms-projects#device-changes
             WeekNumbers?.ForEach((obj) => obj.WidthRequest = newValue * (Device.RuntimePlatform == Device.iOS ? 1.5 : 2.2));
             weekNumberLabels.ForEach(l => l.FontSize = newValue);
         }
@@ -260,7 +263,7 @@ namespace XamForms.Controls
                             FontFamily = WeekdaysFontFamily,
                             FontAttributes = WeekdaysFontAttributes
                         });
-                        dl.Children.Add(dayLabels.Last(), c, 0);
+                        dl.Children.Add(dayLabels.Last()); //, c, 0
                     }
 
                     var stack = new StackLayout

@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 using CalendarDemo.Base;
-using Xamarin.Forms;
+using Microsoft.Maui;
+using Microsoft.Maui.Controls;
+using Microsoft.Maui.Graphics;
 using XamForms.Controls;
 
 namespace CalendarDemo
@@ -45,7 +47,7 @@ namespace CalendarDemo
         {
             var dates = new List<SpecialDate>();
             
-            var grayColor = Color.FromHex("#CCE5E5E5");
+            var grayColor = Color.FromArgb("#CCE5E5E5");
 
             Attendances = new ObservableCollection<SpecialDate>(dates) {
                 new SpecialDate(DateTime.Now.AddDays(3))
@@ -55,8 +57,8 @@ namespace CalendarDemo
                     {
                         Pattern = new List<Pattern>
                         {
-                            new Pattern{ WidthPercent = 1f, HightPercent = 0.7f, Color = Color.White},
-                            new Pattern{ WidthPercent = 1f, HightPercent = 0.3f, Color = Color.Yellow,Text = "Vacation", TextColor=Color.DarkBlue, TextSize=11, TextAlign=TextAlign.Middle},
+                            new Pattern{ WidthPercent = 1f, HightPercent = 0.7f, Color = Color.FromArgb("#FFFFFF")}, //White
+                            new Pattern{ WidthPercent = 1f, HightPercent = 0.3f, Color = Color.FromArgb("#FFFFFF00")/*Yellow*/,Text = "Vacation", TextColor=Color.FromArgb("##FF00008B")/*DarkBlue*/, TextSize=11, TextAlign=TextAlign.Middle},
                         }
                     }
                 },
@@ -67,8 +69,8 @@ namespace CalendarDemo
                     {
                         Pattern = new List<Pattern>
                         {
-                            new Pattern{ WidthPercent = 1f, HightPercent = 0.7f, Color = Color.White},
-                            new Pattern{ WidthPercent = 1f, HightPercent = 0.3f, Color = Color.LightGreen, Text = "Absence", TextColor=Color.DarkBlue, TextSize=11, TextAlign=TextAlign.Middle},
+                            new Pattern{ WidthPercent = 1f, HightPercent = 0.7f, Color = Color.FromArgb("#FFFFFF")}, //White
+                            new Pattern{ WidthPercent = 1f, HightPercent = 0.3f, Color = Color.FromArgb("#FF90EE90")/*LightGreen*/, Text = "Absence", TextColor=Color.FromArgb("#FF00008B")/*DarkBlue*/, TextSize=11, TextAlign=TextAlign.Middle},
                         }
                     }
                 },
@@ -80,8 +82,8 @@ namespace CalendarDemo
                         Pattern = new List<Pattern>
                         {
                             new Pattern{ WidthPercent = 1f, HightPercent = 0.7f, Color = grayColor},
-                            new Pattern{ WidthPercent = 1f, HightPercent = 0.15f, Color = Color.Yellow, Text = "Vacation", TextColor=Color.DarkBlue, TextSize=9, TextAlign=TextAlign.Middle},
-                            new Pattern{ WidthPercent = 1f, HightPercent = 0.15f, Color = Color.LightGreen, Text = "Absence", TextColor=Color.DarkBlue, TextSize=9, TextAlign=TextAlign.Middle},
+                            new Pattern{ WidthPercent = 1f, HightPercent = 0.15f, Color = Color.FromArgb("#FFFFFF00")/*Yellow*/, Text = "Vacation", TextColor=Color.FromArgb("#FF00008B")/*DarkBlue*/, TextSize=9, TextAlign=TextAlign.Middle},
+                            new Pattern{ WidthPercent = 1f, HightPercent = 0.15f, Color = Color.FromArgb("#FF90EE90")/*LightGreen*/, Text = "Absence", TextColor=Color.FromArgb("#FF00008B")/*DarkBlue*/, TextSize=9, TextAlign=TextAlign.Middle},
                         }
                     }
                 },
@@ -93,14 +95,14 @@ namespace CalendarDemo
                         Pattern = new List<Pattern>
                         {
                             new Pattern{ WidthPercent = 1f, HightPercent = 0.7f, Color = grayColor},
-                            new Pattern{ WidthPercent = 1f, HightPercent = 0.3f, Color = Color.LightGreen, Text = "Absence", TextColor=Color.DarkBlue, TextSize=11, TextAlign=TextAlign.Middle},
+                            new Pattern{ WidthPercent = 1f, HightPercent = 0.3f, Color = Color.FromArgb("#FF90EE90")/*LightGreen*/, Text = "Absence", TextColor=Color.FromArgb("#FF00008B")/*DarkBlue*/, TextSize=11, TextAlign=TextAlign.Middle},
                         }
                     }
                 },
                 new SpecialDate(DateTime.Now)
                 {
                     Selectable = true,
-                    TextColor = Color.Red,
+                    TextColor = Color.FromArgb("#FFFF0000"),//Red,
                     FontAttributes = FontAttributes.Bold
                 },
                 new SpecialDate(DateTime.Now.AddDays(1))

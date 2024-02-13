@@ -2,7 +2,8 @@ using System;
 using Android.Content;
 using Android.Graphics;
 using Android.Graphics.Drawables;
-using Xamarin.Forms.Platform.Android;
+using Microsoft.Maui.Controls.Handlers.Compatibility;
+using Microsoft.Maui.Controls.Platform;
 
 namespace XamForms.Controls.Droid
 {

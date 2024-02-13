@@ -1,17 +1,20 @@
 ﻿using XamForms.Controls;
 using XamForms.Controls.iOS;
-using Xamarin.Forms.Platform.iOS;
 using UIKit;
 using CoreGraphics;
 using System;
 using System.Threading.Tasks;
-using Xamarin.Forms;
 #if __UNIFIED__
 using Foundation;
+using Microsoft.Maui.Controls;
+using Microsoft.Maui;
+using Microsoft.Maui.Controls.Handlers.Compatibility;
+using Microsoft.Maui.Controls.Platform;
 #else
 using MonoTouch.Foundation;
 #endif
 
+// TODO Xamarin.Forms.ExportRendererAttribute is not longer supported. For more details see https://github.com/dotnet/maui/wiki/Using-Custom-Renderers-in-.NET-MAUI
 [assembly: Xamarin.Forms.ExportRenderer(typeof(CalendarButton), typeof(CalendarButtonRenderer))]
 namespace XamForms.Controls.iOS
 {

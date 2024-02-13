@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using Xamarin.Forms;
+using Microsoft.Maui.Graphics;
+using Microsoft.Maui.Controls;
+using Microsoft.Maui;
 
 namespace XamForms.Controls
 {
@@ -14,7 +16,7 @@ namespace XamForms.Controls
             BindableProperty.Create(nameof(SelectedDate), typeof(DateTime?), typeof(Calendar), null, BindingMode.TwoWay,
                 propertyChanged: (bindable, oldValue, newValue) =>
                 {
-                    var calendar = (Calendar) bindable;
+                    var calendar = (Calendar)bindable;
 
                     if (calendar.ChangeSelectedDate(newValue as DateTime?))
                     {
@@ -63,7 +65,8 @@ namespace XamForms.Controls
         #region SelectedBorderWidth
 
         public static readonly BindableProperty SelectedBorderWidthProperty =
-            BindableProperty.Create(nameof(SelectedBorderWidth), typeof(int), typeof(Calendar), Device.RuntimePlatform == Device.iOS ? 3 : 5,
+            BindableProperty.Create(nameof(SelectedBorderWidth), typeof(int), typeof(Calendar), // TODO Xamarin.Forms.Device.RuntimePlatform is no longer supported. Use Microsoft.Maui.Devices.DeviceInfo.Platform instead. For more details see https://learn.microsoft.com/en-us/dotnet/maui/migration/forms-projects#device-changes
+Device.RuntimePlatform == Device.iOS ? 3 : 5,
                                     propertyChanged: (bindable, oldValue, newValue) => (bindable as Calendar).ChangeSelectedBorderWidth((int)newValue, (int)oldValue));
 
         protected void ChangeSelectedBorderWidth(int newValue, int oldValue)
@@ -87,7 +90,7 @@ namespace XamForms.Controls
         #region SelectedBorderColor
 
         public static readonly BindableProperty SelectedBorderColorProperty =
-            BindableProperty.Create(nameof(SelectedBorderColor), typeof(Color), typeof(Calendar), Color.FromHex("#c82727"),
+            BindableProperty.Create(nameof(SelectedBorderColor), typeof(Color), typeof(Calendar), Color.FromArgb("#c82727"),
                                     propertyChanged: (bindable, oldValue, newValue) => (bindable as Calendar).ChangeSelectedBorderColor((Color)newValue, (Color)oldValue));
 
         protected void ChangeSelectedBorderColor(Color newValue, Color oldValue)
@@ -111,13 +114,13 @@ namespace XamForms.Controls
         #region SelectedBackgroundColor
 
         public static readonly BindableProperty SelectedBackgroundColorProperty =
-            BindableProperty.Create(nameof(SelectedBackgroundColor), typeof(Color), typeof(Calendar), Color.Default,
+            BindableProperty.Create(nameof(SelectedBackgroundColor), typeof(Color), typeof(Calendar), null,
                                     propertyChanged: (bindable, oldValue, newValue) => (bindable as Calendar).ChangeSelectedBackgroundColor((Color)newValue, (Color)oldValue));
 
         protected void ChangeSelectedBackgroundColor(Color newValue, Color oldValue)
         {
             if (newValue == oldValue) return;
-            buttons.FindAll(b => b.IsSelected).ForEach(b => b.BackgroundColor = (newValue != Color.Default ? newValue : Color.Transparent));
+            buttons.FindAll(b => b.IsSelected).ForEach(b => b.BackgroundColor = (newValue != null ? newValue : Colors.Transparent));
         }
 
         /// <summary>
@@ -135,13 +138,13 @@ namespace XamForms.Controls
         #region SelectedTextColor
 
         public static readonly BindableProperty SelectedTextColorProperty =
-            BindableProperty.Create(nameof(SelectedTextColor), typeof(Color), typeof(Calendar), Color.Default,
+            BindableProperty.Create(nameof(SelectedTextColor), typeof(Color), typeof(Calendar), null,
                                     propertyChanged: (bindable, oldValue, newValue) => (bindable as Calendar).ChangeSelectedTextColor((Color)newValue, (Color)oldValue));
 
         protected void ChangeSelectedTextColor(Color newValue, Color oldValue)
         {
             if (newValue == oldValue) return;
-            buttons.FindAll(b => b.IsSelected).ForEach(b => b.TextColor = (newValue != Color.Default ? newValue : Color.Black));
+            buttons.FindAll(b => b.IsSelected).ForEach(b => b.TextColor = (newValue != null ? newValue : Colors.Black));
         }
 
         /// <summary>
@@ -242,8 +245,22 @@ namespace XamForms.Controls
                 button.FontSize = SelectedFontSize;
                 button.BorderWidth = SelectedBorderWidth;
                 button.BorderColor = SelectedBorderColor;
-                button.BackgroundColor = SelectedBackgroundColor != Color.Default ? SelectedBackgroundColor : (special != null && special.BackgroundColor.HasValue ? special.BackgroundColor.Value : defaultBackgroundColor);
-                button.TextColor = SelectedTextColor != Color.Default ? SelectedTextColor : (special != null && special.TextColor.HasValue ? special.TextColor.Value : defaultTextColor);
+                if (special != null && special.BackgroundColor.IsNotDefault())
+                {
+                    button.BackgroundColor = SelectedBackgroundColor ?? special.BackgroundColor;
+                }
+                else
+                {
+                    button.BackgroundColor = SelectedBackgroundColor ?? (defaultBackgroundColor);
+                }
+                if (special != null && special.TextColor.IsNotDefault())
+                {
+                    button.TextColor = SelectedTextColor != null ? SelectedTextColor : (special.TextColor);
+                }
+                else
+                {
+                    button.TextColor = SelectedTextColor != null ? SelectedTextColor : (defaultTextColor);
+                }
                 button.FontAttributes = SelectedFontAttributes != FontAttributes.None ? SelectedFontAttributes : (special != null && special.FontAttributes.HasValue ? special.FontAttributes.Value : defaultFontAttributes);
                 button.FontFamily = !string.IsNullOrEmpty(SelectedFontFamily) ? SelectedFontFamily : (special != null && !string.IsNullOrEmpty(special.FontFamily) ? special.FontFamily : defaultFontFamily);
             });
@@ -256,7 +273,7 @@ namespace XamForms.Controls
                 buttons.FindAll(b => b.IsSelected).ForEach(b => ResetButton(b));
                 SelectedDates.Clear();
             }
-            
+
             if (!date.HasValue)
             {
                 return false;
@@ -269,7 +286,7 @@ namespace XamForms.Controls
             {
                 return false;
             }
-            
+
             var deselect = button.IsSelected;
             if (button.IsSelected)
             {
@@ -281,13 +298,13 @@ namespace XamForms.Controls
                 var specialDate = SpecialDates?.FirstOrDefault(s => s.Date.Date == button.Date.Value.Date);
                 SetButtonSelected(button, specialDate);
             }
-            
+
             if (clicked)
             {
                 DateClicked?.Invoke(this, new DateTimeEventArgs { DateTime = SelectedDate.Value });
                 DateCommand?.Execute(SelectedDate.Value);
             }
-            
+
             return deselect;
         }
 
